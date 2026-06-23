@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baymax - Your Health Care Dost</title>
+  <style>
+    :root {
+      --baymax-white: #f9f9f9;
+      --tech-cyan: #00ffcc;
+      --tech-glow: rgba(0, 255, 204, 0.4);
+      --bg-dark: #121620;
+      --card-bg: #1b2234;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* --- BAYMAX CHARACTER ART --- */
+    .baymax-box {
+      margin-bottom: 20px;
+    }
+    
+    .baymax-head {
+      width: 120px;
+      height: 80px;
+      background: var(--baymax-white);
+      border-radius: 50%;
+      margin: 0 auto;
+      position: relative;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .eyes-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 70px;
+    }
+
+    .eye {
+      width: 12px;
+      height: 12px;
+      background: #222;
+      border-radius: 50%;
+    }
+
+    .eye-line {
+      flex-grow: 1;
+      height: 2px;
+      background: #222;
+    }
+
+    /* --- CHAT SPLASH --- */
+    .speech-bubble {
+      background: #fff;
+      color: #222;
+      padding: 15px;
+      border-radius: 15px;
+      margin-top: 15px;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      display: inline-block;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #00ffcc, #0077ff);
+      border: none;
+      color: #121620;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 0 15px var(--tech-glow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px var(--tech-cyan);
+    }
+
+    /* --- SCANNER SCREEN (HIDDEN BY DEFAULT) --- */
+    #scanner-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .scanner-viewport {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--tech-cyan);
+      box-shadow: 0 0 25px var(--tech-glow);
+      background: #000;
+    }
+
+    #webcam {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* Mirror view */
+    }
+
+    .laser-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--tech-cyan);
+      box-shadow: 0 0 15px var(--tech-cyan);
+      animation: scanMove 2s infinite ease-in-out;
+    }
+
+    .scan-status {
+      margin-top: 15px;
+      font-family: monospace;
+      color: var(--tech-cyan);
+      letter-spacing: 2px;
+    }
+
+    @keyframes scanMove {
+      0% { top: 0%; }
+      50% { top: 100%; }
+      100% { top: 0%; }
+    }
+
+    /* --- DASHBOARD SCREEN (HIDDEN BY DEFAULT) --- */
+    #dashboard-screen {
+      display: none;
+      width: 100%;
+      margin-top: 20px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-left: 4px solid var(--tech-cyan);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: left;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .card-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #8892b0;
+      margin-bottom: 5px;
+    }
+
+    .card-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="baymax-box">
+      <div class="baymax-head">
+        <div class="eyes-container">
+          <div class="eye"></div>
+          <div class="eye-line"></div>
+          <div class="eye-y"></div>
+          <div class="eye"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="welcome-screen">
+      <div class="speech-bubble">
+        👋 Hello! Main hoon aapka apna health care dost!
+      </div>
+      <br>
+      <button class="btn" onclick="startRetinaScan()">Grant Permission to Scan</button>
+    </div>
+
+    <div id="scanner-screen">
+      <div class="scanner-viewport">
+        <video id="webcam" autoplay playsinline></video>
+        <div class="laser-line"></div>
+      </div>
+      <div class="scan-status" id="status-text">ANALYZING BIOMETRICS...</div>
+    </div>
+
+    <div id="dashboard-screen">
+      <h2 style="color: var(--tech-cyan); margin-bottom: 5px;">Scan Complete! ✅</h2>
+      <p style="color: #8892b0; margin-bottom: 15px;">Baymax Diagnostic Report</p>
+      
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-title">🩸 Blood Group</div>
+          <div class="card-value">B+ Positive</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🍬 Sugar Level</div>
+          <div class="card-value">98 mg/dL <span style="font-size:12px; color:#00ff88;">(Normal)</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🚫 Allergies Detected</div>
+          <div class="card-value">Dust & Peanuts</div>
+        </div>
+        <div class="card">
+          <div class="card-title">💧 Hydration Level</div>
+          <div class="card-value">62% <span style="font-size:12px; color:#ffaa00;">(Need Water)</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 15px; border-left-color: #0077ff;">
+        <div class="card-title">💡 Baymax Health Tip</div>
+        <div class="card-value" style="font-size: 14px; font-weight: normal; line-height: 1.4;">
+          Aapki body main paani ki thori kami lag rahi hai, buddy! Drink 2 glasses of water right now to stay fresh!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Audio Greeting Logic
+    window.addEventListener('click', () => {
+      // Triggered on first click due to browser autoplay safety restrictions
+      if (!window.hasGreeted) {
+        speakUp("Hello! Main hoon aapka apna health care dost!");
+        window.hasGreeted = true;
+      }
+    }, { once: true });
+
+    function speakUp(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'hi-IN'; // Use an Indian/Hindi locale accent for accurate Urdu/Hindi phonetic flow
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Camera & Scanner Loop Logic
+    const video = document.getElementById('webcam');
+    let streamRef = null;
+
+    function startRetinaScan() {
+      // Switch layouts
+      document.getElementById('welcome-screen').style.display = 'none';
+      document.getElementById('scanner-screen').style.display = 'flex';
+      
+      speakUp("Scanning eyes. Please look straight into the camera lens.");
+
+      // Fire up the local laptop camera
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          streamRef = stream;
+          video.srcObject = stream;
+          
+          // Phase status text countdown animations
+          setTimeout(() => { document.getElementById('status-text').innerText = "FETCHING RETINAL PATTERNS..."; }, 1500);
+          setTimeout(() => { document.getElementById('status-text').innerText = "MAPPING BIO-METRIC CARD..."; }, 3200);
+
+          // Complete simulation run after 5 seconds
+          setTimeout(() => {
+            stopCamera();
+            showDashboard();
+          }, 5200);
+        })
+        .catch((err) => {
+          alert("Webcam access is essential to run the simulator feature. Please allow it and try again!");
+          resetToHome();
+        });
+    }
+
+    function stopCamera() {
+      if (streamRef) {
+        streamRef.getTracks().forEach(track => track.stop());
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('scanner-screen').style.display = 'none';
+      document.getElementById('dashboard-screen').style.display = 'block';
+      speakUp("Scan complete. Your health metrics are now properly organized.");
+    }
+
+    function resetToHome() {
+      document.getElementById('scanner-screen').style.display = 'none';
+      document.getElementById('welcome-screen').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
