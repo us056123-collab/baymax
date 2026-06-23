@@ -3,328 +3,175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baymax - Your Health Care Dost</title>
+  <title>Baymax - Living vs Non-Living Scanner</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  
   <style>
     :root {
       --baymax-white: #f9f9f9;
       --tech-cyan: #00ffcc;
-      --tech-glow: rgba(0, 255, 204, 0.4);
+      --tech-error: #ff4a4a;
       --bg-dark: #121620;
       --card-bg: #1b2234;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 500px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    /* --- BAYMAX CHARACTER ART --- */
-    .baymax-box {
-      margin-bottom: 20px;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    body { background-color: var(--bg-dark); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    .container { width: 100%; max-width: 500px; padding: 20px; text-align: center; }
     
-    .baymax-head {
-      width: 120px;
-      height: 80px;
-      background: var(--baymax-white);
-      border-radius: 50%;
-      margin: 0 auto;
-      position: relative;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .baymax-head { width: 120px; height: 80px; background: var(--baymax-white); border-radius: 50%; margin: 0 auto 20px; relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+    .eyes { display: flex; align-items: center; justify-content: space-between; width: 70px; }
+    .eye { width: 12px; height: 12px; background: #222; border-radius: 50%; }
+    .line { flex-grow: 1; height: 2px; background: #222; }
 
-    .eyes-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 70px;
-    }
+    .speech-bubble { background: #fff; color: #222; padding: 15px; border-radius: 15px; margin: 15px 0; font-weight: 600; display: inline-block; }
+    .btn { background: linear-gradient(135deg, #00ffcc, #0077ff); border: none; color: #121620; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; box-shadow: 0 0 15px rgba(0, 255, 204, 0.4); }
 
-    .eye {
-      width: 12px;
-      height: 12px;
-      background: #222;
-      border-radius: 50%;
-    }
-
-    .eye-line {
-      flex-grow: 1;
-      height: 2px;
-      background: #222;
-    }
-
-    /* --- CHAT SPLASH --- */
-    .speech-bubble {
-      background: #fff;
-      color: #222;
-      padding: 15px;
-      border-radius: 15px;
-      margin-top: 15px;
-      font-weight: 600;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      display: inline-block;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, #00ffcc, #0077ff);
-      border: none;
-      color: #121620;
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 0 15px var(--tech-glow);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px var(--tech-cyan);
-    }
-
-    /* --- SCANNER SCREEN (HIDDEN BY DEFAULT) --- */
-    #scanner-screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .scanner-viewport {
-      position: relative;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 4px solid var(--tech-cyan);
-      box-shadow: 0 0 25px var(--tech-glow);
-      background: #000;
-    }
-
-    #webcam {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scaleX(-1); /* Mirror view */
-    }
-
-    .laser-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: var(--tech-cyan);
-      box-shadow: 0 0 15px var(--tech-cyan);
-      animation: scanMove 2s infinite ease-in-out;
-    }
-
-    .scan-status {
-      margin-top: 15px;
-      font-family: monospace;
-      color: var(--tech-cyan);
-      letter-spacing: 2px;
-    }
-
-    @keyframes scanMove {
-      0% { top: 0%; }
-      50% { top: 100%; }
-      100% { top: 0%; }
-    }
-
-    /* --- DASHBOARD SCREEN (HIDDEN BY DEFAULT) --- */
-    #dashboard-screen {
-      display: none;
-      width: 100%;
-      margin-top: 20px;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-left: 4px solid var(--tech-cyan);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: left;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    .card-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      color: #8892b0;
-      margin-bottom: 5px;
-    }
-
-    .card-value {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    #scanner-screen, #dashboard-screen { display: none; flex-direction: column; align-items: center; margin-top: 20px; }
+    .viewport { position: relative; width: 280px; height: 280px; border-radius: 50%; overflow: hidden; border: 4px solid var(--tech-cyan); background: #000; }
+    #webcam { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    .laser { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--tech-cyan); animation: scan 2s infinite ease-in-out; }
+    
+    @keyframes scan { 0%, 100% { top: 0%; } 50% { top: 100%; } }
+    .status { margin-top: 15px; font-family: monospace; color: var(--tech-cyan); letter-spacing: 1px; font-size: 14px; }
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; width: 100%; }
+    .card { background: var(--card-bg); border-left: 4px solid var(--tech-cyan); padding: 15px; border-radius: 8px; text-align: left; }
+    .card-title { font-size: 11px; color: #8892b0; text-transform: uppercase; }
+    .card-val { font-size: 16px; font-weight: bold; margin-top: 3px; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="baymax-box">
-      <div class="baymax-head">
-        <div class="eyes-container">
-          <div class="eye"></div>
-          <div class="eye-line"></div>
-          <div class="eye-y"></div>
-          <div class="eye"></div>
-        </div>
-      </div>
+    <div class="baymax-head">
+      <div class="eyes"><div class="eye"></div><div class="line"></div><div class="eye"></div></div>
     </div>
 
-    <div id="welcome-screen">
-      <div class="speech-bubble">
-        👋 Hello! Main hoon aapka apna health care dost!
-      </div>
-      <br>
-      <button class="btn" onclick="startRetinaScan()">Grant Permission to Scan</button>
+    <div id="home-screen">
+      <div class="speech-bubble" id="main-bubble">System ready. Click below to begin biometric assessment.</div>
+      <br><button class="btn" onclick="initiateScan()">Scan Environment</button>
     </div>
 
     <div id="scanner-screen">
-      <div class="scanner-viewport">
-        <video id="webcam" autoplay playsinline></video>
-        <div class="laser-line"></div>
+      <div class="viewport">
+        <video id="webcam" autoplay playsinline muted></video>
+        <div class="laser" id="laser-line"></div>
       </div>
-      <div class="scan-status" id="status-text">ANALYZING BIOMETRICS...</div>
+      <div class="status" id="status-msg">LOADING CORE AI MODELS...</div>
     </div>
 
     <div id="dashboard-screen">
-      <h2 style="color: var(--tech-cyan); margin-bottom: 5px;">Scan Complete! ✅</h2>
-      <p style="color: #8892b0; margin-bottom: 15px;">Baymax Diagnostic Report</p>
-      
-      <div class="dashboard-grid">
-        <div class="card">
-          <div class="card-title">🩸 Blood Group</div>
-          <div class="card-value">B+ Positive</div>
+      <h2 id="report-title" style="color: var(--tech-cyan);">Report Summary</h2>
+      <div class="grid" id="report-data">
         </div>
-        <div class="card">
-          <div class="card-title">🍬 Sugar Level</div>
-          <div class="card-value">98 mg/dL <span style="font-size:12px; color:#00ff88;">(Normal)</span></div>
-        </div>
-        <div class="card">
-          <div class="card-title">🚫 Allergies Detected</div>
-          <div class="card-value">Dust & Peanuts</div>
-        </div>
-        <div class="card">
-          <div class="card-title">💧 Hydration Level</div>
-          <div class="card-value">62% <span style="font-size:12px; color:#ffaa00;">(Need Water)</span></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top: 15px; border-left-color: #0077ff;">
-        <div class="card-title">💡 Baymax Health Tip</div>
-        <div class="card-value" style="font-size: 14px; font-weight: normal; line-height: 1.4;">
-          Aapki body main paani ki thori kami lag rahi hai, buddy! Drink 2 glasses of water right now to stay fresh!
-        </div>
-      </div>
+      <br>
+      <button class="btn" onclick="location.reload()">Scan Again</button>
     </div>
   </div>
 
   <script>
-    // Audio Greeting Logic
-    window.addEventListener('click', () => {
-      // Triggered on first click due to browser autoplay safety restrictions
-      if (!window.hasGreeted) {
-        speakUp("Hello! Main hoon aapka apna health care dost!");
-        window.hasGreeted = true;
-      }
-    }, { once: true });
-
-    function speakUp(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'hi-IN'; // Use an Indian/Hindi locale accent for accurate Urdu/Hindi phonetic flow
-      window.speechSynthesis.speak(utterance);
-    }
-
-    // Camera & Scanner Loop Logic
     const video = document.getElementById('webcam');
-    let streamRef = null;
+    let modelsLoaded = false;
 
-    function startRetinaScan() {
-      // Switch layouts
-      document.getElementById('welcome-screen').style.display = 'none';
-      document.getElementById('scanner-screen').style.display = 'flex';
-      
-      speakUp("Scanning eyes. Please look straight into the camera lens.");
-
-      // Fire up the local laptop camera
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-          streamRef = stream;
-          video.srcObject = stream;
-          
-          // Phase status text countdown animations
-          setTimeout(() => { document.getElementById('status-text').innerText = "FETCHING RETINAL PATTERNS..."; }, 1500);
-          setTimeout(() => { document.getElementById('status-text').innerText = "MAPPING BIO-METRIC CARD..."; }, 3200);
-
-          // Complete simulation run after 5 seconds
-          setTimeout(() => {
-            stopCamera();
-            showDashboard();
-          }, 5200);
-        })
-        .catch((err) => {
-          alert("Webcam access is essential to run the simulator feature. Please allow it and try again!");
-          resetToHome();
-        });
+    // Speak function setup
+    function speak(text) {
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'hi-IN';
+      window.speechSynthesis.speak(msg);
     }
 
-    function stopCamera() {
-      if (streamRef) {
-        streamRef.getTracks().forEach(track => track.stop());
+    // Load AI Face models as soon as page mounts
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Fetch model weights directly from open source delivery networks
+        await faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights');
+        modelsLoaded = true;
+        document.getElementById('main-bubble').innerText = "👋 Hello! Main hoon aapka apna health care dost! Stand in front of me to scan.";
+        speak("Hello! Main hoon aapka apna health care dost!");
+      } catch (e) {
+        document.getElementById('main-bubble').innerText = "Model initialization delayed. Check internet connection.";
+      }
+    });
+
+    async function initiateScan() {
+      if(!modelsLoaded) {
+        alert("Please wait for AI models to download completely from the network.");
+        return;
+      }
+      
+      document.getElementById('home-screen').style.display = 'none';
+      document.getElementById('scanner-screen').style.display = 'flex';
+      document.getElementById('status-msg').innerText = "INITIALIZING LENS... LOOK AT CAMERA";
+      speak("Scanning process started. Please stay steady.");
+
+      // Open user laptop camera hardware stream
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+        video.srcObject = stream;
+        
+        // Let it cycle the laser graphic for 3 seconds to gather visual data frames
+        setTimeout(() => { processVisualFrames(stream); }, 4000);
+      } catch (err) {
+        alert("Camera required for live analysis.");
+        location.reload();
       }
     }
 
-    function showDashboard() {
+    async function processVisualFrames(stream) {
+      document.getElementById('status-msg').innerText = "COMPUTING BIOMETRIC PRESENCE...";
+      
+      // Run the frame through the tiny face detector neural network
+      const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+      
+      // Turn off camera once calculation completes
+      stream.getTracks().forEach(track => track.stop());
+
       document.getElementById('scanner-screen').style.display = 'none';
       document.getElementById('dashboard-screen').style.display = 'block';
-      speakUp("Scan complete. Your health metrics are now properly organized.");
+
+      if (detection) {
+        // A living person was recognized in front of the lens! Generate real variation patterns
+        displayLivingReport();
+      } else {
+        // No organic facial anchors detected. Mark target structure as static material object
+        displayNonLivingReport();
+      }
     }
 
-    function resetToHome() {
-      document.getElementById('scanner-screen').style.display = 'none';
-      document.getElementById('welcome-screen').style.display = 'block';
+    function displayLivingReport() {
+      document.getElementById('report-title').innerText = "Organic Being Detected! ✅";
+      document.getElementById('report-title').style.color = "var(--tech-cyan)";
+      
+      // Dynamically shuffle numbers so every person gets different values
+      const sugar = Math.floor(Math.random() * (115 - 85) + 85);
+      const groups = ['A+', 'B+', 'O+', 'AB+'];
+      const blood = groups[Math.floor(Math.random() * groups.length)];
+
+      document.getElementById('report-data').innerHTML = `
+        <div class="card"><div class="card-title">Classification</div><div class="card-val">Living (Human)</div></div>
+        <div class="card"><div class="card-title">Blood Group</div><div class="card-val">${blood}</div></div>
+        <div class="card"><div class="card-title">Glucose Index</div><div class="card-val">${sugar} mg/dL</div></div>
+        <div class="card"><div class="card-title">Status</div><div class="card-val" style="color:#00ffcc;">Healthy Buddy</div></div>
+      `;
+      speak("Scan complete. Organic structure verified. You are looking healthy, buddy!");
+    }
+
+    function displayNonLivingReport() {
+      document.getElementById('report-title').innerText = "Scan Alert! ⚠️";
+      document.getElementById('report-title').style.color = "var(--tech-error)";
+
+      document.getElementById('report-data').innerHTML = `
+        <div class="card" style="grid-column: span 2; border-left-color: var(--tech-error);">
+          <div class="card-title">Target Structure Analysis</div>
+          <div class="card-val">Non-Living Object Detected</div>
+          <p style="margin-top: 10px; font-size: 13px; color: #8892b0; line-height:1.4;">
+            Baymax diagnostic parameters failed to match any biological cells, heartbeat rhythms, or organic patterns. This item is a non-living element.
+          </p>
+        </div>
+      `;
+      speak("Alert. Diagnostic parameters failed. This object is a non living thing. I can only provide medical help to living beings, buddy.");
     }
   </script>
 </body>
