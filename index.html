@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baymax - Your Health Care Dost</title>
+  <title>Baymax - Multi-Language Healthcare Dost</title>
   <style>
     :root {
       --baymax-white: #f9f9f9;
@@ -14,197 +14,40 @@
       --card-bg: #1b2234;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background-color: var(--bg-dark); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+    .container { width: 100%; max-width: 500px; padding: 20px; text-align: center; }
 
-    body {
-      background-color: var(--bg-dark);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+    /* --- BAYMAX ART & ANIMATED BLINK --- */
+    .baymax-box { margin-bottom: 20px; }
+    .baymax-head { width: 120px; height: 80px; background: var(--baymax-white); border-radius: 50%; margin: 0 auto; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+    .eyes-container { display: flex; align-items: center; justify-content: space-between; width: 70px; }
+    .eye { width: 12px; height: 12px; background: #222; border-radius: 50%; animation: blink 4s infinite ease-in-out; }
+    .eye-line { flex-grow: 1; height: 2px; background: #222; }
+    @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
 
-    .container {
-      width: 100%;
-      max-width: 500px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    /* --- BAYMAX CHARACTER ART WITH BLINKING EYES --- */
-    .baymax-box {
-      margin-bottom: 20px;
-    }
+    /* --- UI ELEMENTS --- */
+    .speech-bubble { background: #fff; color: #222; padding: 15px; border-radius: 15px; margin-top: 15px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: inline-block; }
     
-    .baymax-head {
-      width: 120px;
-      height: 80px;
-      background: var(--baymax-white);
-      border-radius: 50%;
-      margin: 0 auto;
-      position: relative;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .lang-select { background: var(--card-bg); color: var(--tech-cyan); border: 2px solid var(--tech-cyan); padding: 10px 20px; font-size: 16px; border-radius: 20px; outline: none; margin-top: 15px; cursor: pointer; width: 80%; text-align: center; font-weight: bold; }
 
-    .eyes-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 70px;
-    }
+    .btn { background: linear-gradient(135deg, #00ffcc, #0077ff); border: none; color: #121620; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; margin-top: 20px; box-shadow: 0 0 15px var(--tech-glow); transition: transform 0.2s, box-shadow 0.2s; }
+    .btn:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--tech-cyan); }
 
-    .eye {
-      width: 12px;
-      height: 12px;
-      background: #222;
-      border-radius: 50%;
-      animation: blink 4s infinite ease-in-out;
-    }
+    /* --- SCREENS --- */
+    #scanner-screen, #dashboard-screen { display: none; flex-direction: column; align-items: center; margin-top: 20px; }
+    .scanner-viewport { position: relative; width: 280px; height: 280px; border-radius: 50%; overflow: hidden; border: 4px solid var(--tech-cyan); box-shadow: 0 0 25px var(--tech-glow); background: #000; }
+    #webcam { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    .laser-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--tech-cyan); box-shadow: 0 0 15px var(--tech-cyan); animation: scanMove 2s infinite ease-in-out; }
+    .scan-status { margin-top: 15px; font-family: monospace; color: var(--tech-cyan); letter-spacing: 2px; }
+    @keyframes scanMove { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
 
-    .eye-line {
-      flex-grow: 1;
-      height: 2px;
-      background: #222;
-    }
-
-    /* Eye Blinking Animation */
-    @keyframes blink {
-      0%, 90%, 100% { transform: scaleY(1); }
-      95% { transform: scaleY(0.1); }
-    }
-
-    /* --- CHAT SPLASH --- */
-    .speech-bubble {
-      background: #fff;
-      color: #222;
-      padding: 15px;
-      border-radius: 15px;
-      margin-top: 15px;
-      font-weight: 600;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      display: inline-block;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, #00ffcc, #0077ff);
-      border: none;
-      color: #121620;
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 0 15px var(--tech-glow);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px var(--tech-cyan);
-    }
-
-    /* --- SCANNER SCREEN --- */
-    #scanner-screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .scanner-viewport {
-      position: relative;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 4px solid var(--tech-cyan);
-      box-shadow: 0 0 25px var(--tech-glow);
-      background: #000;
-    }
-
-    #webcam {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scaleX(-1);
-    }
-
-    .laser-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: var(--tech-cyan);
-      box-shadow: 0 0 15px var(--tech-cyan);
-      animation: scanMove 2s infinite ease-in-out;
-    }
-
-    .scan-status {
-      margin-top: 15px;
-      font-family: monospace;
-      color: var(--tech-cyan);
-      letter-spacing: 2px;
-    }
-
-    @keyframes scanMove {
-      0% { top: 0%; }
-      50% { top: 100%; }
-      100% { top: 0%; }
-    }
-
-    /* --- DASHBOARD SCREEN --- */
-    #dashboard-screen {
-      display: none;
-      width: 100%;
-      margin-top: 20px;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-left: 4px solid var(--tech-cyan);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: left;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    .card-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      color: #8892b0;
-      margin-bottom: 5px;
-    }
-
-    .card-value {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    /* --- DASHBOARD DISPLAY --- */
+    #dashboard-screen { width: 100%; }
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+    .card { background: var(--card-bg); border-left: 4px solid var(--tech-cyan); padding: 15px; border-radius: 8px; text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .card-title { font-size: 12px; text-transform: uppercase; color: #8892b0; margin-bottom: 5px; }
+    .card-value { font-size: 17px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -222,10 +65,19 @@
 
     <div id="welcome-screen">
       <div class="speech-bubble" id="speech-text">
-        Click the button below so I can introduce myself, buddy!
+        Select your language to wake me up, buddy!
       </div>
       <br>
-      <button class="btn" onclick="activateBaymax()">Wake Up Baymax</button>
+      <select id="language-picker" class="lang-select">
+        <option value="en">English</option>
+        <option value="ur">Urdu (اردو)</option>
+        <option value="pnb">Punjabi (پنجابی / ਪੰਜਾਬੀ)</option>
+        <option value="zh">Chinese (中文)</option>
+        <option value="ar">Arabic (العربية)</option>
+        <option value="fa">Persian (فارسی)</option>
+      </select>
+      <br>
+      <button class="btn" id="main-action-btn" onclick="activateBaymax()">Wake Up Baymax</button>
     </div>
 
     <div id="scanner-screen">
@@ -233,18 +85,18 @@
         <video id="webcam" autoplay playsinline muted></video>
         <div class="laser-line"></div>
       </div>
-      <div class="scan-status" id="status-text">ANALYZING MOLECULAR STRUCTURE...</div>
+      <div class="scan-status" id="status-text">ANALYZING STRUCTURE...</div>
     </div>
 
     <div id="dashboard-screen">
       <h2 id="report-heading" style="color: var(--tech-cyan); margin-bottom: 5px;">Scan Complete! ✅</h2>
-      <p style="color: #8892b0; margin-bottom: 15px;">Baymax Diagnostic Report</p>
+      <p id="report-subheading" style="color: #8892b0; margin-bottom: 15px;">Diagnostic Report</p>
       
       <div class="dashboard-grid" id="dashboard-data">
         </div>
       
       <br>
-      <button class="btn" onclick="location.reload()">Scan Again</button>
+      <button class="btn" id="retry-btn" onclick="location.reload()">Scan Again</button>
     </div>
   </div>
 
@@ -255,85 +107,226 @@
     const canvas = document.getElementById('analyzer-canvas');
     const ctx = canvas.getContext('2d');
     let streamRef = null;
+    let selectedLang = 'en';
 
-    // Direct Voice synthesis setup
-    function speakUp(text) {
-      window.speechSynthesis.cancel(); // Stop any overlapping voices
+    // TRANSLATION DICTIONARY FOR BAYMAX
+    const translations = {
+      en: {
+        welcome: "Hello! Main hoon aapka apna health care dost!",
+        scanPrompt: "Grant Permission to Scan",
+        scanning: "Scanning process initiated. Please look straight into the camera lens.",
+        status1: "ANALYZING MOLECULAR STRUCTURE...",
+        status2: "FINALIZING DIAGNOSTIC REPORT...",
+        humanHeading: "Organic Being Detected! ✅",
+        nonLivingHeading: "Scan Alert! ⚠️",
+        bloodCard: "🩸 Blood Group",
+        sugarCard: "🍬 Sugar Level",
+        allergyCard: "🚫 Allergies",
+        classCard: "🧬 Classification",
+        humanClass: "Living Human",
+        normal: "(Normal)",
+        allergiesVal: "Dust & Peanuts",
+        tipCard: "💡 Baymax Health Tip",
+        tipVal: "Aapki organic health report normal hai buddy! Take care of yourself and drink plenty of water!",
+        humanVoice: "Scan complete. Organic structure verified. You are looking healthy, buddy!",
+        nonLivingVal: "Non-Living Object Detected",
+        nonLivingDesc: "Baymax diagnostic parameters failed to match any cellular skin profiles or organic warmth patterns. This item is an inanimate, non-living object!",
+        nonLivingVoice: "Alert. This item is a non living object. I can only provide medical diagnostic metrics to living beings, buddy.",
+        retry: "Scan Again",
+        subheading: "Baymax Diagnostic Report"
+      },
+      ur: {
+        welcome: "ہیلو! میں ہوں آپ کا اپنا ہیلتھ کیئر دوست!",
+        scanPrompt: "اسکین کرنے کی اجازت دیں",
+        scanning: "اسکیننگ کا عمل شروع ہو گیا ہے۔ براہ کرم کیمرے کے لینس میں سیدھا دیکھیں۔",
+        status1: "مالیکیولر ساخت کا تجزیہ جاری ہے...",
+        status2: "تشخیصی رپورٹ کو حتمی شکل دی جا رہی ہے...",
+        humanHeading: "جاندار وجود کا پتہ چل گیا! ✅",
+        nonLivingHeading: "اسکین الرٹ! ⚠️",
+        bloodCard: "🩸 بلڈ گروپ",
+        sugarCard: "🍬 شوگر لیول",
+        allergyCard: "🚫 الرجی",
+        classCard: "🧬 درجہ بندی",
+        humanClass: "زندہ انسان",
+        normal: "(نارمل)",
+        allergiesVal: "مٹی اور مونگ پھلی",
+        tipCard: "💡 ہیتھ ٹپ",
+        tipVal: "آپ کی صحت کی رپورٹ بالکل نارمل ہے بڈی! اپنا خیال رکھیں اور خوب پانی پیئیں!",
+        humanVoice: "اسکین مکمل ہو گیا ہے۔ آپ بالکل صحت مند لگ رہے ہیں، بڈی!",
+        nonLivingVal: "بے جان چیز کا پتہ چلا ہے",
+        nonLivingDesc: "بایمیکس کے تشخیصی پیرامیٹرز کسی بھی زندہ جلد یا نامیاتی گرمی کے نمونوں سے میچ نہیں کر سکے۔ یہ ایک بے جان چیز ہے!",
+        nonLivingVoice: "الرٹ۔ یہ ایک بے جان چیز ہے۔ میں صرف جانداروں کو طبی رپورٹ فراہم کر سکتا ہوں، بڈی۔",
+        retry: "دوبارہ اسکین کریں",
+        subheading: "بایمیکس ہیلتھ رپورٹ"
+      },
+      pnb: {
+        welcome: "ہیلو! میں واں آپ دا اپنا ہیلتھ کیئر دوست!",
+        scanPrompt: "اسکین کرن دی اجازت دیو",
+        scanning: "اسکیننگ شروع ہو گئی اے۔ کیمرے ول سدھا دیکھو بڈی۔",
+        status1: "چیکنگ چل رہی اے...",
+        status2: "رپورٹ تیار ہو رہی اے...",
+        humanHeading: "جاندار بندہ مل گیا! ✅",
+        nonLivingHeading: "خطرہ! ⚠️",
+        bloodCard: "🩸 خون دا گروپ",
+        sugarCard: "🍬 شوگر لیول",
+        allergyCard: "🚫 الرجی",
+        classCard: "🧬 کیٹیگری",
+        humanClass: "زندہ انسان",
+        normal: "(نارمل)",
+        allergiesVal: "مٹی تے مونگ پھلی",
+        tipCard: "💡 بائیمیکس مشورہ",
+        tipVal: "تہاڈی رپورٹ بالکل فٹ اے بڈی! اپنا دھیان رکھو تے رج کے پانی پیو!",
+        humanVoice: "چیکنگ پوری ہو گئی اے۔ تسیں بالکل ہٹے کٹے او بڈی!",
+        nonLivingVal: "بے جان چیز اے",
+        nonLivingDesc: "ایہ جاندار چیز نہیں اے۔ بائیمیکس نوں کوئی دھڑکن یا جاندار سکن نہیں ملی۔",
+        nonLivingVoice: "اوئے بڈی، ایہ تے کوئی بے جان چیز اے۔ میں صرف بندیاں دا علاج کردا واں۔",
+        retry: "دوبارہ چیک کرو",
+        subheading: "بائیمیکس ہیلتھ رپورٹ"
+      },
+      zh: {
+        welcome: "你好！我是你专属的医疗好伙伴大白！",
+        scanPrompt: "授权开始扫描",
+        scanning: "扫描程序已启动。请直视摄像头。",
+        status1: "正在分析分子结构...",
+        status2: "正在生成诊断报告...",
+        humanHeading: "检测到生命体！✅",
+        nonLivingHeading: "扫描警告！⚠️",
+        bloodCard: "🩸 血型",
+        sugarCard: "🍬 血糖水平",
+        allergyCard: "🚫 过敏原",
+        classCard: "🧬 类别",
+        humanClass: "人类生命体",
+        normal: "(正常)",
+        allergiesVal: "粉尘与花生",
+        tipCard: "💡 大白健康小贴士",
+        tipVal: "你的健康报告非常正常，好朋友！照顾好自己，多喝水！",
+        humanVoice: "扫描完成。生命结构已确认。你看起来很健康，好伙伴！",
+        nonLivingVal: "检测到非生命物体",
+        nonLivingDesc: "大白诊断系统无法匹配到任何细胞皮肤特征或生命热量。这是一个非生命物体！",
+        nonLivingVoice: "警告。这是一个非生命物体。我只能为生命体提供医疗服务，好伙伴。",
+        retry: "重新扫描",
+        subheading: "大白医疗诊断报告"
+      },
+      ar: {
+        welcome: "مرحباً! أنا بيماكس، صديقك الخاص للرعاية الصحية!",
+        scanPrompt: "السماح بالمسح الطبي",
+        scanning: "بدأت عملية المسح. يرجى النظر مباشرة إلى عدسة الكاميرا.",
+        status1: "جاري تحليل التركيب الجزيئي...",
+        status2: "جاري إعداد التقرير الطبي...",
+        humanHeading: "تم اكتشاف كائن حي! ✅",
+        nonLivingHeading: "تحذير من المسح! ⚠️",
+        bloodCard: "🩸 فصيلة الدم",
+        sugarCard: "🍬 مستوى السكر",
+        allergyCard: "🚫 الحساسية",
+        classCard: "🧬 التصنيف",
+        humanClass: "إنسان حي",
+        normal: "(طبيعي)",
+        allergiesVal: "الغبار والفول السوداني",
+        tipCard: "💡 نصيحة بيماكس الصحية",
+        tipVal: "تقريرك الصحي طبيعي جداً يا صديقي! اعتني بنفسك واشرب الكثير من الماء!",
+        humanVoice: "اكتمل المسح. تم التحقق من البنية العضوية. تبدو بصحة جيدة يا صديقي!",
+        nonLivingVal: "تم اكتشاف جسم غير حي",
+        nonLivingDesc: "فشلت معايير بيماكس التشخيصية في مطابقة أي خلايا بشرية أو أنماط حرارية عضوية. هذا الشيء جماد غير حي!",
+        nonLivingVoice: "تحذير. هذا الشيء جسم غير حي. يمكنني فقط تقديم تقارير طبية للكائنات الحية يا صديقي.",
+        retry: "إعادة المسح",
+        subheading: "تقرير بيماكس التشخيصي"
+      },
+      fa: {
+        welcome: "سلام! من بایمکس، دوست مراقبت‌های بهداشتی شما هستم!",
+        scanPrompt: "اجازه برای اسکن کردن",
+        scanning: "فرآیند اسکن آغاز شد. لطفاً مستقیماً به لنز دوربین نگاه کنید.",
+        status1: "در حال تحلیل ساختار مولکولی...",
+        status2: "در حال نهایی کردن گزارش تشخیص...",
+        humanHeading: "موجود زنده شناسایی شد! ✅",
+        nonLivingHeading: "هشدار اسکن! ⚠️",
+        bloodCard: "🩸 گروه خونی",
+        sugarCard: "🍬 سطح قند خون",
+        allergyCard: "🚫 آلرژی‌ها",
+        classCard: "🧬 طبقه‌بندی",
+        humanClass: "انسان زنده",
+        normal: "(نرمال)",
+        allergiesVal: "گرد و غبار و بادام زمینی",
+        tipCard: "💡 نکته بهداشتی بایمکس",
+        tipVal: "گزارش سلامتی شما کاملاً نرمال است دوست من! مراقب خودت باش و آب زیاد بنوش!",
+        humanVoice: "اسکن کامل شد. ساختار زنده تایید شد. شما سالم به نظر می‌رسید، دوست من!",
+        nonLivingVal: "شیء غیر زنده شناسایی شد",
+        nonLivingDesc: "پارامترهای تشخیصی بایمکس با هیچ پروفایل پوستی سلولی یا الگوهای گرمای زنده مطابقت نداشت. این یک جسم غیر زنده است!",
+        nonLivingVoice: "هشدار. این یک جسم غیر زنده است. من فقط می‌توانم به موجودات زنده گزارش پزشکی بدهم، دوست من.",
+        retry: "اسکن دوباره",
+        subheading: "گزارش پزشکی بایمکس"
+      }
+    };
+
+    // SYSTEM VOICE CONFIGURATION MAP
+    const voiceMap = {
+      en: 'en-US',
+      ur: 'hi-IN',  // Falls back to phonetic South Asian synthesis matching spoken Urdu syntax
+      pnb: 'hi-IN', // Falls back to phonetic regional engine matching spoken Punjabi syntax
+      zh: 'zh-CN',
+      ar: 'ar-SA',
+      fa: 'fa-IR'
+    };
+
+    function speakUp(text, langKey) {
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'hi-IN'; // Keeps a great Urdu/Hindi accent flow
+      utterance.lang = voiceMap[langKey] || 'en-US';
       window.speechSynthesis.speak(utterance);
     }
 
-    // Wake Up Interaction to bypass browser voice restrictions
     function activateBaymax() {
-      document.getElementById('speech-text').innerText = "Hello! Main hoon aapka apna health care dost! Click below to scan your environment.";
-      speakUp("Hello! Main hoon aapka apna health care dost!");
+      selectedLang = document.getElementById('language-picker').value;
+      const t = translations[selectedLang];
       
-      // Change the button functionality to trigger the scanner
-      const actionBtn = document.querySelector('.btn');
-      actionBtn.innerText = "Grant Permission to Scan";
+      document.getElementById('speech-text').innerText = t.welcome;
+      speakUp(t.welcome, selectedLang);
+      
+      // Transform button design to proceed with scan action sequence
+      const actionBtn = document.getElementById('main-action-btn');
+      actionBtn.innerText = t.scanPrompt;
       actionBtn.setAttribute("onclick", "startRetinaScan()");
+      
+      // Hide picker dropdown once language profile registers
+      document.getElementById('language-picker').style.style.display = 'none';
     }
 
     function startRetinaScan() {
+      const t = translations[selectedLang];
       document.getElementById('welcome-screen').style.display = 'none';
       document.getElementById('scanner-screen').style.display = 'flex';
+      document.getElementById('status-text').innerText = t.status1;
       
-      speakUp("Scanning process initiated. Please look straight into the camera lens.");
+      speakUp(t.scanning, selectedLang);
 
-      // Fire up webcam stream
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
           streamRef = stream;
           video.srcObject = stream;
           
-          // Absolute 4 second countdown processing loop
-          setTimeout(() => { document.getElementById('status-text').innerText = "CALCULATING BIOMETRIC DENSITY..."; }, 1500);
-          setTimeout(() => { document.getElementById('status-text').innerText = "FINALIZING DIAGNOSTIC REPORT..."; }, 3000);
-
-          setTimeout(() => {
-            analyzeFrame();
-          }, 4000);
+          setTimeout(() => { document.getElementById('status-text').innerText = t.status2; }, 2000);
+          setTimeout(() => { analyzeFrame(); }, 4000);
         })
         .catch((err) => {
-          alert("Camera access denied! Baymax needs to see the environment.");
+          alert("Camera initialization error.");
           location.reload();
         });
     }
 
     function analyzeFrame() {
-      // Capture current camera video frame onto hidden canvas
       ctx.drawImage(video, 0, 0, 100, 100);
       const frameData = ctx.getImageData(0, 0, 100, 100).data;
       
-      // Calculate overall color balance & brightness variations
-      let totalBrightness = 0;
       let organicToneCount = 0;
-      
       for(let i = 0; i < frameData.length; i += 4) {
-        let r = frameData[i];
-        let g = frameData[i+1];
-        let b = frameData[i+2];
-        
-        let brightness = (r + g + b) / 3;
-        totalBrightness += brightness;
-
-        // Human skin tones/organic warmth often sit with red channels slightly higher than blue channels
-        if(r > g && g > b && r > 40) {
-          organicToneCount++;
-        }
+        let r = frameData[i]; let g = frameData[i+1]; let b = frameData[i+2];
+        if(r > g && g > b && r > 40) { organicToneCount++; }
       }
 
-      // Close camera tracks cleanly
-      if (streamRef) {
-        streamRef.getTracks().forEach(track => track.stop());
-      }
+      if (streamRef) { streamRef.getTracks().forEach(track => track.stop()); }
 
-      // Transition views
       document.getElementById('scanner-screen').style.display = 'none';
       document.getElementById('dashboard-screen').style.display = 'block';
 
-      // Evaluation: Empty dark rooms or plain cold walls lack organic color signatures
       if (organicToneCount > 800) {
         displayHumanData();
       } else {
@@ -342,42 +335,44 @@
     }
 
     function displayHumanData() {
-      document.getElementById('report-heading').innerText = "Organic Being Detected! ✅";
+      const t = translations[selectedLang];
+      document.getElementById('report-heading').innerText = t.humanHeading;
       document.getElementById('report-heading').style.color = "var(--tech-cyan)";
+      document.getElementById('report-subheading').innerText = t.subheading;
+      document.getElementById('retry-btn').innerText = t.retry;
 
       const sugar = Math.floor(Math.random() * (110 - 85) + 85);
       const groups = ['A+', 'B+', 'O+', 'AB+'];
       const blood = groups[Math.floor(Math.random() * groups.length)];
 
       document.getElementById('dashboard-data').innerHTML = `
-        <div class="card"><div class="card-title">🩸 Blood Group</div><div class="card-value">${blood}</div></div>
-        <div class="card"><div class="card-title">🍬 Sugar Level</div><div class="card-value">${sugar} mg/dL</div></div>
-        <div class="card"><div class="card-title">🚫 Allergies</div><div class="card-value">Dust & Peanuts</div></div>
-        <div class="card"><div class="card-title">🧬 Classification</div><div class="card-value">Living Human</div></div>
+        <div class="card"><div class="card-title">${t.bloodCard}</div><div class="card-value">${blood}</div></div>
+        <div class="card"><div class="card-title">${t.sugarCard}</div><div class="card-value">${sugar} mg/dL <span style="font-size:11px;color:#00ffcc;">${t.normal}</span></div></div>
+        <div class="card"><div class="card-title">${t.allergyCard}</div><div class="card-value">${t.allergiesVal}</div></div>
+        <div class="card"><div class="card-title">${t.classCard}</div><div class="card-value">${t.humanClass}</div></div>
         <div class="card" style="grid-column: span 2; border-left-color: #0077ff;">
-          <div class="card-title">💡 Baymax Health Tip</div>
-          <div class="card-value" style="font-size: 14px; font-weight: normal; line-height: 1.4;">
-            Aapki organic health report normal hai buddy! Take care of yourself and drink plenty of water!
-          </div>
+          <div class="card-title">${t.tipCard}</div>
+          <div class="card-value" style="font-size: 14px; font-weight: normal; line-height: 1.4;">${t.tipVal}</div>
         </div>
       `;
-      speakUp("Scan complete. Organic structure verified. You are looking healthy, buddy!");
+      speakUp(t.humanVoice, selectedLang);
     }
 
     function displayNonLivingData() {
-      document.getElementById('report-heading').innerText = "Scan Alert! ⚠️";
+      const t = translations[selectedLang];
+      document.getElementById('report-heading').innerText = t.nonLivingHeading;
       document.getElementById('report-heading').style.color = "var(--tech-error)";
+      document.getElementById('report-subheading').innerText = t.subheading;
+      document.getElementById('retry-btn').innerText = t.retry;
 
       document.getElementById('dashboard-data').innerHTML = `
         <div class="card" style="grid-column: span 2; border-left-color: var(--tech-error);">
-          <div class="card-title">Target Structure Analysis</div>
-          <div class="card-value">Non-Living Object Detected</div>
-          <p style="margin-top: 10px; font-size: 14px; color: #8892b0; line-height:1.4;">
-            Baymax diagnostic parameters failed to match any cellular skin profiles or organic warmth patterns. This item is an inanimate, non-living object!
-          </p>
+          <div class="card-title">${t.classCard}</div>
+          <div class="card-value">${t.nonLivingVal}</div>
+          <p style="margin-top: 10px; font-size: 14px; color: #8892b0; line-height:1.4;">${t.nonLivingDesc}</p>
         </div>
       `;
-      speakUp("Alert. This item is a non living object. I can only provide medical diagnostic metrics to living beings, buddy.");
+      speakUp(t.nonLivingVoice, selectedLang);
     }
   </script>
 </body>
